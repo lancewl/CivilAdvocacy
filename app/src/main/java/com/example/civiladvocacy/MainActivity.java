@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,6 +20,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private RecyclerView recyclerView; // Layout's recyclerview
 
     private OfficialAdapter mAdapter; // Data to recyclerview adapter
+
+    private static final int INFO_CODE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +51,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onOptionsItemSelected(MenuItem item) {
 
         if (item.getItemId() == R.id.info_btn) {
-            // TODO
+            Intent intent = new Intent(this, AboutActivity.class);
+            startActivityForResult(intent, INFO_CODE);
             return true;
         } else if (item.getItemId() == R.id.location_btn) {
             // TODO

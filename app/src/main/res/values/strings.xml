@@ -1,7 +1,11 @@
 <resources>
-    <string name="app_name">CivilAdvocacy</string>
+    <string name="app_name">Civil Advocacy</string>
     <string name="info">Info</string>
     <string name="location">Location</string>
     <string name="office_title">President of the United States</string>
     <string name="office_name_party">Office Name(Party)</string>
+    <string name="google_civic_n_information_api"><u>Google Civic\n Information API</u></string>
+    <string name="data_provided_by">Data provided by</string>
+    <string name="version_1_0">Version 1.0</string>
+    <string name="_2021_hsuan_an_weng_lin">© 2021, Hsuan-An Weng Lin</string>
 </resources>
