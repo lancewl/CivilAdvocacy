@@ -2,4 +2,6 @@
     <string name="app_name">CivilAdvocacy</string>
     <string name="info">Info</string>
     <string name="location">Location</string>
+    <string name="office_title">President of the United States</string>
+    <string name="office_name_party">Office Name(Party)</string>
 </resources>

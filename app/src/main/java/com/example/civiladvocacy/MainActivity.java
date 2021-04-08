@@ -1,18 +1,41 @@
 package com.example.civiladvocacy;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.ArrayList;
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private final List<Official> officialList = new ArrayList<>();  // Main content is here
+
+    private RecyclerView recyclerView; // Layout's recyclerview
+
+    private OfficialAdapter mAdapter; // Data to recyclerview adapter
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Official test1 = new Official("Title1", "Name1");
+        Official test2 = new Official("Title2", "Name2");
+        officialList.add(test1);
+        officialList.add(test2);
+
+        recyclerView = findViewById(R.id.offcialRecycler);
+        mAdapter = new OfficialAdapter(officialList, this);
+        recyclerView.setAdapter(mAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.addItemDecoration(new OfficialDecoration(this, R.drawable.separator));
+
     }
 
     @Override
@@ -33,5 +56,12 @@ public class MainActivity extends AppCompatActivity {
         } else {
             return super.onOptionsItemSelected(item);
         }
+    }
+
+    // From OnClickListener
+    @Override
+    public void onClick(View v) {  // click listener called by ViewHolder clicks
+        int pos = recyclerView.getChildLayoutPosition(v);
+        Official o = officialList.get(pos);
     }
 }
