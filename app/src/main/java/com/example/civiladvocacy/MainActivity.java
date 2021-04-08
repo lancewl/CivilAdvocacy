@@ -1,19 +1,35 @@
 package com.example.civiladvocacy;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
+    private FusedLocationProviderClient mFusedLocationClient;
+    private static final int LOCATION_REQUEST = 111;
 
     private final List<Official> officialList = new ArrayList<>();  // Main content is here
 
@@ -38,6 +54,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         recyclerView.setAdapter(mAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.addItemDecoration(new OfficialDecoration(this, R.drawable.separator));
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        determineLocation();
 
     }
 
@@ -67,5 +86,65 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {  // click listener called by ViewHolder clicks
         int pos = recyclerView.getChildLayoutPosition(v);
         Official o = officialList.get(pos);
+    }
+
+    // Location Code
+    private void determineLocation() {
+        if (checkPermission()) {
+            mFusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, location -> {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            String addr = getAddress(location);
+                            Toast.makeText(this, addr, Toast.LENGTH_LONG).show();
+                        }
+                    })
+                    .addOnFailureListener(this, e -> Toast.makeText(MainActivity.this,
+                            e.getMessage(), Toast.LENGTH_LONG).show());
+        }
+    }
+
+    private boolean checkPermission() {
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this,
+                    new String[]{
+                            Manifest.permission.ACCESS_FINE_LOCATION
+                    }, LOCATION_REQUEST);
+            return false;
+        }
+        return true;
+    }
+
+    private String getZip(Location loc) {
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        List<Address> addresses;
+        String zip = "0";
+
+        try {
+            addresses = geocoder.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
+            zip = addresses.get(0).getPostalCode();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return zip;
+    }
+
+    private String getAddress(Location loc) {
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        List<Address> addresses;
+        String res = "0";
+
+        try {
+            addresses = geocoder.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
+            res = addresses.get(0).getAddressLine(0);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return res;
     }
 }
