@@ -13,11 +13,15 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.squareup.picasso.Picasso;
 
 public class OfficialActivity extends AppCompatActivity {
+
+    private static final String DEM_URL = "https://democrats.org";
+    private static final String REP_URL = "https://www.gop.com";
 
     private String location;
     private Official official;
@@ -154,6 +158,84 @@ public class OfficialActivity extends AppCompatActivity {
                 .error(R.drawable.brokenimage)
                 .placeholder(R.drawable.placeholder)
                 .into(officialImage);
+    }
+
+    public void partyClicked(View v) {
+        Intent i= new Intent(Intent.ACTION_VIEW, Uri.parse(""));;
+        if (official.getOfficialParty().contains("Democrat")) {
+            i = new Intent(Intent.ACTION_VIEW, Uri.parse(DEM_URL));
+        } else if (official.getOfficialParty().contains("Republican")) {
+            i = new Intent(Intent.ACTION_VIEW, Uri.parse(REP_URL));
+        }
+
+        if (i.resolveActivity(getPackageManager()) != null) {
+            startActivity(i);
+        } else {
+            makeErrorAlert("No Application found that handles ACTION_VIEW (geo) intents");
+        }
+    }
+
+    public void websiteClicked(View v) {
+        Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(official.getOfficialUrl()));
+        if (i.resolveActivity(getPackageManager()) != null) {
+            startActivity(i);
+        } else {
+            makeErrorAlert("No Application found that handles ACTION_VIEW (geo) intents");
+        }
+    }
+
+    public void emailClicked(View v) {
+        String address = official.getOfficialEmail();
+
+        Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:"));
+
+        intent.putExtra(Intent.EXTRA_EMAIL, address);
+        intent.putExtra(Intent.EXTRA_SUBJECT, "This comes from EXTRA_SUBJECT");
+        intent.putExtra(Intent.EXTRA_TEXT, "Email text body from EXTRA_TEXT...");
+
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(intent, 111);
+        } else {
+            makeErrorAlert("No Application found that handles SENDTO (mailto) intents");
+        }
+    }
+
+    public void addressClicked(View v) {
+        String address = official.getOfficialAddr();
+
+        Uri mapUri = Uri.parse("geo:0,0?q=" + Uri.encode(address));
+
+        Intent intent = new Intent(Intent.ACTION_VIEW, mapUri);
+        intent.setPackage("com.google.android.apps.maps");
+
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        } else {
+            makeErrorAlert("No Application found that handles ACTION_VIEW (geo) intents");
+        }
+    }
+
+    public void phoneClicked(View v) {
+        String number = official.getOfficialPhone();
+
+        Intent intent = new Intent(Intent.ACTION_DIAL);
+        intent.setData(Uri.parse("tel:" + number));
+
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        } else {
+            makeErrorAlert("No Application found that handles ACTION_DIAL (tel) intents");
+        }
+    }
+
+    private void makeErrorAlert(String msg) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setMessage(msg);
+        builder.setTitle("No App Found");
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     public void facebookClicked(View v) {
