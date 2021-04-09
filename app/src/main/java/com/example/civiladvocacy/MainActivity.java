@@ -149,21 +149,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return true;
     }
 
-    private String getZip(Location loc) {
-        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-        List<Address> addresses;
-        String zip = "0";
-
-        try {
-            addresses = geocoder.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
-            zip = addresses.get(0).getPostalCode();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return zip;
-    }
-
     private String getAddress(Location loc) {
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
         List<Address> addresses;

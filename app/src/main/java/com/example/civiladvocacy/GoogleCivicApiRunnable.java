@@ -105,8 +105,8 @@ public class GoogleCivicApiRunnable implements Runnable {
 
             // "normalizedInput" section
             JSONObject normalized = jObjMain.getJSONObject("normalizedInput");
-            addr += normalized.getString("line1");
-            addr += ", " + normalized.getString("city");
+            // addr += normalized.getString("line1");
+            addr += normalized.getString("city");
             addr += ", " + normalized.getString("state");
             addr += " " + normalized.getString("zip");
 
