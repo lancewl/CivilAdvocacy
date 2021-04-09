@@ -17,7 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.squareup.picasso.Picasso;
 
-public class OfficialActivity  extends AppCompatActivity {
+public class OfficialActivity extends AppCompatActivity {
 
     private String location;
     private Official official;
@@ -205,5 +205,12 @@ public class OfficialActivity  extends AppCompatActivity {
             startActivity(new Intent(Intent.ACTION_VIEW,
                     Uri.parse("https://www.youtube.com/" + name)));
         }
+    }
+
+    public void photoClicked(View v) {
+        Intent intent = new Intent(this, PhotoActivity.class);
+        intent.putExtra("OFFICIAL", official);
+        intent.putExtra("LOCATION", locationView.getText().toString());
+        startActivityForResult(intent, 1);
     }
 }
