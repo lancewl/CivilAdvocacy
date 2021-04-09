@@ -176,8 +176,8 @@ public class GoogleCivicApiRunnable implements Runnable {
                     }
 
                     // Phone Section
-                    if (officialObject.has("phone")) {
-                        officialPhone = officialObject.getJSONArray("phone").getString(0);
+                    if (officialObject.has("phones")) {
+                        officialPhone = officialObject.getJSONArray("phones").getString(0);
                     }
 
                     // Url Section
