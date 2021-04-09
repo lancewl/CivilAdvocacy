@@ -8,4 +8,20 @@
     <string name="data_provided_by">Data provided by</string>
     <string name="version_1_0">Version 1.0</string>
     <string name="_2021_hsuan_an_weng_lin">© 2021, Hsuan-An Weng Lin</string>
+    <string name="office_name">Office Name</string>
+    <string name="official_name">Official Name</string>
+    <string name="official_party">(Official Party)</string>
+    <string name="official_image">Official\'s Image</string>
+    <string name="official_partyimage">Official\'s Party</string>
+    <string name="facebook">Facebook</string>
+    <string name="twitter">Twitter</string>
+    <string name="youtube">Youtube</string>
+    <string name="addressT">Address:</string>
+    <string name="addressC">1600 Pennsylvania Avenue Northwest, Washington, DC 20500</string>
+    <string name="phoneC">(202) 456-1111</string>
+    <string name="emailC">sample@gmail.com</string>
+    <string name="websiteC">https://www.whitehouse.gov/</string>
+    <string name="phoneT">Phone:</string>
+    <string name="emailT">Email:</string>
+    <string name="websiteT">Website:</string>
 </resources>

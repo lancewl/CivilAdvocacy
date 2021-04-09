@@ -1,5 +1,6 @@
 package com.example.civiladvocacy;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -7,15 +8,19 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.text.InputType;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +29,8 @@ import com.google.android.gms.location.LocationServices;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -41,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private OfficialAdapter mAdapter; // Data to recyclerview adapter
 
     private static final int INFO_CODE = 1;
+    private static final int OFFICIAL_CODE = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +82,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             startActivityForResult(intent, INFO_CODE);
             return true;
         } else if (item.getItemId() == R.id.location_btn) {
-            // TODO
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Enter Address");
+            final EditText input = new EditText(this);
+            input.setGravity(Gravity.CENTER);
+            builder.setView(input);
+
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    String inputAddr = input.getText().toString();
+                    doCivicDownload(inputAddr);
+                }
+            });
+            builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) { }
+            });
+
+            AlertDialog dialog = builder.create();
+            dialog.show();
+
             return true;
         } else {
             return super.onOptionsItemSelected(item);
@@ -86,6 +112,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {  // click listener called by ViewHolder clicks
         int pos = recyclerView.getChildLayoutPosition(v);
         Official o = officialList.get(pos);
+
+        Intent intent = new Intent(this, OfficialActivity.class);
+        intent.putExtra("OFFICIAL", o);
+        intent.putExtra("LOCATION", locationView.getText().toString());
+        startActivityForResult(intent, OFFICIAL_CODE);
     }
 
     // Location Code
@@ -155,6 +186,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void updateCivicData(String addr, List<Official> oList) {
         locationView.setText(addr);
+        officialList.clear();
         officialList.addAll(oList);
         mAdapter.notifyDataSetChanged();
     }
