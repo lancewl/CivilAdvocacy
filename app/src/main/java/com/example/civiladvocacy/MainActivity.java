@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -33,6 +34,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private final List<Official> officialList = new ArrayList<>();  // Main content is here
 
+    private TextView locationView;
+
     private RecyclerView recyclerView; // Layout's recyclerview
 
     private OfficialAdapter mAdapter; // Data to recyclerview adapter
@@ -44,10 +47,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Official test1 = new Official("Title1", "Name1");
-        Official test2 = new Official("Title2", "Name2");
-        officialList.add(test1);
-        officialList.add(test2);
+        locationView = findViewById(R.id.locationView);
 
         recyclerView = findViewById(R.id.offcialRecycler);
         mAdapter = new OfficialAdapter(officialList, this);
@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         // Got last known location. In some rare situations this can be null.
                         if (location != null) {
                             String addr = getAddress(location);
-                            Toast.makeText(this, addr, Toast.LENGTH_LONG).show();
+                            doCivicDownload(addr);
                         }
                     })
                     .addOnFailureListener(this, e -> Toast.makeText(MainActivity.this,
@@ -146,5 +146,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             e.printStackTrace();
         }
         return res;
+    }
+
+    private void doCivicDownload(String addr) {
+        GoogleCivicApiRunnable loaderTaskRunnable = new GoogleCivicApiRunnable(this, addr);
+        new Thread(loaderTaskRunnable).start();
+    }
+
+    public void updateCivicData(String addr, List<Official> oList) {
+        locationView.setText(addr);
+        officialList.addAll(oList);
+        mAdapter.notifyDataSetChanged();
     }
 }

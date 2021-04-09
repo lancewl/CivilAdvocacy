@@ -38,8 +38,8 @@ public class OfficialAdapter extends RecyclerView.Adapter<OfficialViewHolder> {
     public void onBindViewHolder(@NonNull OfficialViewHolder holder, int position) {
         Official official = officialList.get(position);
 
-        holder.title.setText(official.getTitle());
-        holder.name.setText(official.getName());
+        holder.title.setText(official.getOfficeName());
+        holder.name.setText(official.getOfficialName());
     }
 
     @Override
