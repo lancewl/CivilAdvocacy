@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Civil Advocacy</string>
     <string name="info">Info</string>
-    <string name="location">Location</string>
+    <string name="location">Loading</string>
     <string name="office_title">President of the United States</string>
     <string name="office_name_party">Office Name(Party)</string>
     <string name="google_civic_n_information_api"><u>Google Civic\n Information API</u></string>
@@ -24,4 +24,5 @@
     <string name="phoneT">Phone:</string>
     <string name="emailT">Email:</string>
     <string name="websiteT">Website:</string>
+    <string name="error">No Network Connection\nData cannot be accessed/loaded without any internet connection.</string>
 </resources>

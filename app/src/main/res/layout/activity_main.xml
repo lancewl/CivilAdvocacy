@@ -29,4 +29,23 @@
         tools:layout_editor_absoluteX="156dp">
 
     </androidx.recyclerview.widget.RecyclerView>
+
+    <TextView
+        android:id="@+id/error_dialog"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="160dp"
+        android:background="@drawable/border"
+        android:outlineProvider="bounds"
+        android:padding="10dp"
+        android:text="@string/error"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/offcialRecycler"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/locationView"
+        app:layout_constraintWidth_percent="0.8" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

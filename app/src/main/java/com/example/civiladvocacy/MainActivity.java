@@ -1,5 +1,6 @@
 package com.example.civiladvocacy;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -8,12 +9,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.Gravity;
@@ -42,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private final List<Official> officialList = new ArrayList<>();  // Main content is here
 
     private TextView locationView;
+    private TextView errorView;
 
     private RecyclerView recyclerView; // Layout's recyclerview
 
@@ -56,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         locationView = findViewById(R.id.locationView);
+        errorView = findViewById(R.id.error_dialog);
 
         recyclerView = findViewById(R.id.offcialRecycler);
         mAdapter = new OfficialAdapter(officialList, this);
@@ -122,16 +128,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // Location Code
     private void determineLocation() {
         if (checkPermission()) {
-            mFusedLocationClient.getLastLocation()
-                    .addOnSuccessListener(this, location -> {
-                        // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
-                            String addr = getAddress(location);
-                            doCivicDownload(addr);
-                        }
-                    })
-                    .addOnFailureListener(this, e -> Toast.makeText(MainActivity.this,
-                            e.getMessage(), Toast.LENGTH_LONG).show());
+            if (checkNetwork()) {
+                errorView.setVisibility(View.GONE);
+                mFusedLocationClient.getLastLocation()
+                        .addOnSuccessListener(this, location -> {
+                            // Got last known location. In some rare situations this can be null.
+                            if (location != null) {
+                                String addr = getAddress(location);
+                                doCivicDownload(addr);
+                            }
+                        })
+                        .addOnFailureListener(this, e -> Toast.makeText(MainActivity.this,
+                                e.getMessage(), Toast.LENGTH_LONG).show());
+            } else {
+                locationView.setText("No Data For Location");
+                errorView.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -147,6 +159,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return false;
         }
         return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == LOCATION_REQUEST) {
+            if (permissions[0].equals(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    determineLocation();
+                } else {
+                    locationView.setText("No Data For Location");
+                }
+            }
+        }
+    }
+
+    private Boolean checkNetwork() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm == null) {
+            Toast.makeText(this, "Cannot access ConnectivityManager", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+
+        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+
+        return isConnected;
     }
 
     private String getAddress(Location loc) {
@@ -170,7 +214,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void updateCivicData(String addr, List<Official> oList) {
-        locationView.setText(addr);
+        if (addr == null) {
+            locationView.setText("No Data For Location");
+        } else {
+            locationView.setText(addr);
+        }
         officialList.clear();
         officialList.addAll(oList);
         mAdapter.notifyDataSetChanged();
